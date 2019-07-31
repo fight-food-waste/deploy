@@ -1,0 +1,44 @@
+
+- name: Allow to read and write into /srv
+  file:
+    path: "/srv/{{ app_name }}"
+    mode: u=rwx,g=rx,o=rx
+    owner: www-data
+    group: www-data
+    state: directory
+    recurse: yes
+
+- name: composer install
+  command: composer install
+  args:
+    chdir: "{{ ansistrano_release_path.stdout }}"
+  become: yes
+  become_user: www-data
+
+- name: "Check if .env.{{ app_name }} exists locally"
+  local_action: stat path="../.env.{{ app_name }}"
+  register: result
+
+- name: "Copy .env.{{ app_name }} if it exists locally"
+  copy: src="../.env.{{ app_name }}" dest="{{ ansistrano_release_path.stdout }}/.env"
+  when: result is success
+
+- name: Migrate database
+  command: php artisan migrate:fresh --force
+  args:
+    chdir: "{{ ansistrano_release_path.stdout }}"
+
+- name: Seed database
+  command: php artisan db:seed --force
+  args:
+    chdir: "{{ ansistrano_release_path.stdout }}"
+
+- name: Restart caddy
+  systemd:
+    name: caddy
+    state: restarted
+
+- name: Restart PHP-FPM
+  systemd:
+    name: php7.3-fpm
+    state: restarted

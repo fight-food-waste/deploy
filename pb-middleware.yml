@@ -1,0 +1,48 @@
+---
+
+- name: Deploy web server middleware and config
+  hosts: ffw
+  vars:
+    nodejs_version: 12
+    mariadb_version: 10.4
+    mysql_databases:
+      - name: collects
+      - name: services
+    mysql_users:
+      - name: collects
+        password: ffw
+        priv: 'collects.*:ALL'
+      - name: services
+        password: ffw
+        priv: 'services.*:ALL'
+    php_version: 7.3
+    php_modules:
+      - mysql
+      - curl
+      - bcmath
+      - xml
+      - mbstring
+      - zip
+      - gd
+    php_fpm_pools:
+      - name: collects
+      - name: services
+    caddy_vhosts:
+      - name: 'ffw-collects'
+        template: 'caddy-laravel.j2'
+        hostname: 'fight-food-waste.com'
+        docroot: '/srv/collects/current/public'
+        php_fpm_pool: /var/run/php/php-fpm-collects.sock
+      - name: 'ffw-services'
+        template: 'caddy-laravel.j2'
+        hostname: 'services.fight-food-waste.com'
+        docroot: '/srv/services/current/public'
+        php_fpm_pool: /var/run/php/php-fpm-services.sock
+
+  roles:
+    - { role: angristan.base, tags: base }
+    - { role: angristan.nodejs, tags: nodejs }
+    - { role: angristan.yarn, tags: yarn }
+    - { role: angristan.mysql, tags: mysql }
+    - { role: angristan.php-fpm, tags: php-fpm }
+    - { role: angristan.caddy, tags: caddy }

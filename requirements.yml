@@ -1,0 +1,12 @@
+- src: https://github.com/angristan/ansible-php-fpm
+  name: angristan.php-fpm
+- src: https://github.com/angristan/ansible-mysql
+  name: angristan.mysql
+- src: https://github.com/angristan/ansible-caddy
+  name: angristan.caddy
+- src: https://github.com/angristan/ansible-nodejs
+  name: angristan.nodejs
+- src: https://github.com/angristan/ansible-yarn
+  name: angristan.yarn
+- src: https://github.com/angristan/ansible-base
+  name: angristan.base

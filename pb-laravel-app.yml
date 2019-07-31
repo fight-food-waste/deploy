@@ -1,0 +1,15 @@
+---
+
+- name: "Deploy {{ app_name }} laravel app"
+  hosts: ffw
+  vars:
+    # app_name: collects
+    ansistrano_deploy_to: "/srv/{{ app_name }}"
+    ansistrano_keep_releases: 3
+    ansistrano_deploy_via: git
+    ansistrano_git_repo: "https://github.com/fight-food-waste/{{ app_name }}.git"
+    ansistrano_before_setup_tasks_file: "{{ playbook_dir }}/tasks/pre-deploy.yml"
+    ansistrano_after_symlink_tasks_file: "{{ playbook_dir }}/tasks/post-deploy.yml"
+
+  roles:
+    - { role: ansistrano.deploy, tags: deploy }

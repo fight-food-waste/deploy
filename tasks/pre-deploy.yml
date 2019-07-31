@@ -1,0 +1,4 @@
+- name: Install composer
+  apt:
+    name: composer
+    state: latest

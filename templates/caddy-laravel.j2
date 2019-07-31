@@ -1,0 +1,9 @@
+{{ vhost.hostname }} {
+    log / {{ caddy_log_path }}/{{ vhost.hostname }}.log {combined}
+    errors {{ caddy_log_path }}/{{ vhost.hostname }}_errors.log
+    root {{ vhost.docroot }}
+    fastcgi / {{ vhost.php_fpm_pool }} php
+    rewrite {
+        to {path} {path}/ /index.php?{query}
+    }
+}
