@@ -23,6 +23,12 @@
   copy: src="../.env.{{ app_name }}" dest="{{ ansistrano_release_path.stdout }}/.env"
   when: result is success
 
+- name: Add scheduler cron
+  cron:
+    name: "{{ app_name }}-scheduler"
+    job: "cd /srv/{{ app_name }}/current && php artisan schedule:run"
+    user: www-data
+
 - name: Migrate database
   command: php artisan migrate:fresh --force
   args:
